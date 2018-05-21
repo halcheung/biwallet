@@ -25,15 +25,9 @@ let decrypt = (text) => {
   let result = CryptoJS.AES.decrypt(text, CryptoJS.enc.Utf8.parse(secretKey), ivObj)
   return result.toString(CryptoJS.enc.Utf8)
 }
-
+let isMobile = (navigator.userAgent.match(/(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i))
 let ajax = (dataStr, callback, errCallback) => {
   axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-
-  let errCB = (err) => {
-    console.log(err)
-    this.$emit('child-say', err.message)
-  }
-  errCallback = errCallback || errCB
 
   console.log('data', dataStr)
   axios.post(apiUrl, {
@@ -67,7 +61,8 @@ export default {
   encrypt,
   decrypt,
   apiMethods,
-  ajax
+  ajax,
+  isMobile
 }
 </script>
 

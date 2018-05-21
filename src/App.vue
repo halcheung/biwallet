@@ -26,7 +26,10 @@
         <mu-list-item v-if="docked" @click.native="open = false" title="Close"/>
       </mu-list>
     </mu-drawer>
-    <mu-snackbar v-if="toast" :message="toastText" action="关闭" @actionClick="hideToast" @click="hideToast" />
+    <mu-snackbar v-if="toast&&isMobile" :message="toastText" action="关闭" @actionClick="directlyHideToast" @click="directlyHideToast" />
+    <mu-popup position="bottom" :overlay="false" popupClass="demo-popup-top" :open="toast&&!isMobile">
+      {{toastText}}
+    </mu-popup>
     <router-view v-on:child-say="listenToChild"/>
   </div>
 </template>
@@ -40,8 +43,15 @@ export default {
       open: false,
       docked: true,
       toastText: '',
-      toast: false
+      toast: false,
+      isMobile: false
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.isMobile = !!this._G.isMobile
+      console.log(this.isMobile)
+    })
   },
   methods: {
     toggle (flag) {
@@ -49,11 +59,14 @@ export default {
       this.docked = !flag
     },
     listenToChild (msg) {
-      this.toast = true
       this.toastText = msg
-      setTimeout(this.hideToast, 4000)
+      this.toast = true
+      this.hideToast()
     },
     hideToast () {
+      setTimeout(this.directlyHideToast, 4000)
+    },
+    directlyHideToast () {
       this.toastText = ''
       this.toast = false
     }
@@ -62,6 +75,17 @@ export default {
 </script>
 
 <style>
+  .demo-popup-top {
+    width: 100%;
+    opacity: .8;
+    height: 48px;
+    line-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 375px;
+    color:#f48;
+  }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

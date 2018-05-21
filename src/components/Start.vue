@@ -40,13 +40,15 @@ export default {
       this._G.ajax(dataStr, (json) => {
         if (json.code === 0) {
           console.log(json)
+          // this.$router.push('/MineMachines')
         } else {
-          this.$emit('child-say', json.error)
-          this.errorText = json.error
+          this.$emit('child-say', 'Something wrong!')
+          this.errorText = 'Something wrong!' // json.error
         }
+      }, (err) => {
+        console.log(err)
+        this.$emit('child-say', err.message)
       })
-
-      // this.$router.push('/MineMachines')
     }
   }
 }
