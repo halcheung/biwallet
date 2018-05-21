@@ -3,7 +3,6 @@
 import Vue from 'vue'
 import App from './App'
 import MuseUI from 'muse-ui'
-import axios from 'axios'
 import VCharts from 'v-charts'
 import 'muse-ui/dist/muse-ui.css'
 import 'muse-ui/dist/theme-dark.css'
@@ -13,7 +12,6 @@ import global from './components/global'
 Vue.config.productionTip = false
 Vue.use(MuseUI)
 Vue.use(VCharts)
-Vue.prototype.$axios = axios
 Vue.prototype._G = global
 
 /* eslint-disable no-new */

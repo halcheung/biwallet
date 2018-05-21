@@ -26,7 +26,8 @@
         <mu-list-item v-if="docked" @click.native="open = false" title="Close"/>
       </mu-list>
     </mu-drawer>
-    <router-view/>
+    <mu-snackbar v-if="toast" :message="toastText" action="关闭" @actionClick="hideToast" @click="hideToast" />
+    <router-view v-on:child-say="listenToChild"/>
   </div>
 </template>
 
@@ -37,13 +38,24 @@ export default {
     return {
       activeTab: 'tab1',
       open: false,
-      docked: true
+      docked: true,
+      toastText: '',
+      toast: false
     }
   },
   methods: {
     toggle (flag) {
       this.open = !this.open
       this.docked = !flag
+    },
+    listenToChild (msg) {
+      this.toast = true
+      this.toastText = msg
+      setTimeout(this.hideToast, 4000)
+    },
+    hideToast () {
+      this.toastText = ''
+      this.toast = false
     }
   }
 }

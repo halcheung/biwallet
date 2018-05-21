@@ -4,8 +4,13 @@
 
 <script>
 import CryptoJS from 'crypto-js'
+import axios from 'axios'
 
-const walletKey = '0xb43d4351ab9dcb4271fd21fa0a6cc31c542b71463456527a7176454e47777272'
+const apiUrl = 'http://new.biwallet.me/api/do.php'
+const apiMethods = {
+  minersStatus: 'miners.status'
+}
+// const walletKey = '0xe8fea2d4d731bc46e74ccc303fa527233234674731486b67775a564c66444c32'
 const secretKey = 'a83H4f1LL1f4H38a'
 const iv = 'a83H4f1LL1f4H38a'
 let ivObj = {
@@ -20,10 +25,49 @@ let decrypt = (text) => {
   let result = CryptoJS.AES.decrypt(text, CryptoJS.enc.Utf8.parse(secretKey), ivObj)
   return result.toString(CryptoJS.enc.Utf8)
 }
+
+let ajax = (dataStr, callback, errCallback) => {
+  axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+
+  let errCB = (err) => {
+    console.log(err)
+    this.$emit('child-say', err.message)
+  }
+  errCallback = errCallback || errCB
+
+  console.log('data', dataStr)
+  axios.post(apiUrl, {
+    data: encrypt(dataStr).toString()
+  })
+    .then((resp) => {
+      // console.log(resp)
+      // console.log(resp.data)
+      // console.log(decrypt(resp.data))
+      let json = {}
+      if (resp && resp.status === 200) {
+        json = JSON.parse(decrypt(resp.data))
+      } else {
+        json = {
+          code: -999,
+          error: '网络不给力，请稍后再试！'
+        }
+      }
+      callback(json)
+    })
+    .catch(errCallback)
+}
+
 export default {
+  data () {
+    return {
+      toast: false,
+      toastText: ''
+    }
+  },
   encrypt,
   decrypt,
-  walletKey
+  apiMethods,
+  ajax
 }
 </script>
 

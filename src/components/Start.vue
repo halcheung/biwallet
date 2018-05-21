@@ -4,7 +4,7 @@
       <mu-card-header title="中矿" subTitle="zhongkuang.org">
         <mu-avatar :src="logoUrl" class="avatar" slot="avatar"/>
       </mu-card-header>
-      <mu-text-field style="width:calc(100% - 20px);" hintText="请在此输入钱包地址..." type="text" :errorText="errorText" icon="account_balance_wallet"/>
+      <mu-text-field style="width:calc(100% - 20px);" hintText="请在此输入钱包地址..." v-model="walletAddr" type="text" :errorText="errorText" icon="account_balance_wallet"/>
       <mu-raised-button label="查询" icon="search" style="margin:10px 20px 20px 20px;width:calc(100% - 40px)" @click.native="enter" primary/>
     </mu-card>
   </div>
@@ -18,29 +18,35 @@ export default {
   data () {
     return {
       logoUrl: avatar,
-      errorText: ''
+      errorText: '',
+      walletAddr: ''
     }
   },
   mounted () {
     this.$nextTick(() => {
-      let data = '{"method": "miners.status","timeStamp": "' + (new Date()).getTime + '","wallet": "' + this._G.walletKey + '"}'
 
-      this.$axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-      this.$axios.post('http://new.biwallet.me/api/do.php', {
-        data: data
-      })
-        .then((resp) => {
-          let json = JSON.parse(this._G.decrypt(resp.data))
-          console.log(json)
-        })
-        .catch((err) => {
-          console.log('error', err)
-        })
     })
   },
   methods: {
     enter () {
-      this.$router.push('/MineMachines')
+      if (!this.walletAddr) {
+        this.errorText = '请输入钱包地址！'
+        return
+      } else {
+        this.errorText = ''
+      }
+      let dataStr = '{"method": "' + this._G.apiMethods.minersStatus + '","timeStamp": ' + (new Date()).getTime() + ',"wallet": "' + this.walletAddr + '"}'
+
+      this._G.ajax(dataStr, (json) => {
+        if (json.code === 0) {
+          console.log(json)
+        } else {
+          this.$emit('child-say', json.error)
+          this.errorText = json.error
+        }
+      })
+
+      // this.$router.push('/MineMachines')
     }
   }
 }
