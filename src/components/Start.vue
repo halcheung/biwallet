@@ -40,10 +40,12 @@ export default {
       this._G.ajax(dataStr, (json) => {
         if (json.code === 0) {
           console.log(json)
-          // this.$router.push('/MineMachines')
+          this._G.walletKey = this.walletAddr
+          this._G.wallet = json
+          this.$router.push('/MineMachines')
         } else {
-          this.$emit('child-say', 'Something wrong!')
-          this.errorText = 'Something wrong!' // json.error
+          this.$emit('child-say', json.error)
+          this.errorText = json.error // json.error
         }
       }, (err) => {
         console.log(err)

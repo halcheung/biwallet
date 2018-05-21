@@ -10,7 +10,7 @@ const apiUrl = 'http://new.biwallet.me/api/do.php'
 const apiMethods = {
   minersStatus: 'miners.status'
 }
-// const walletKey = '0xe8fea2d4d731bc46e74ccc303fa527233234674731486b67775a564c66444c32'
+const walletKey = '' // '0xe8fea2d4d731bc46e74ccc303fa527233234674731486b67775a564c66444c32'
 const secretKey = 'a83H4f1LL1f4H38a'
 const iv = 'a83H4f1LL1f4H38a'
 let ivObj = {
@@ -18,6 +18,7 @@ let ivObj = {
   mode: CryptoJS.mode.CBC,
   padding: CryptoJS.pad.Pkcs7
 }
+let wallet = {}
 let encrypt = (text) => {
   return CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(secretKey), ivObj)
 }
@@ -62,7 +63,9 @@ export default {
   decrypt,
   apiMethods,
   ajax,
-  isMobile
+  isMobile,
+  walletKey,
+  wallet
 }
 </script>
 
